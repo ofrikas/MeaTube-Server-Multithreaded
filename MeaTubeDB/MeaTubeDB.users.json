@@ -1,0 +1,50 @@
+[{
+  "_id": {
+    "$oid": "66d8b03b993650372cef0eb6"
+  },
+  "username": "admin",
+  "password": "admin123",
+  "displayName": "MeatLover123",
+  "image": "https://cdn.shopify.com/s/files/1/1728/9189/files/Guga-Dalstrong_1024x1024.jpg",
+  "subscribers": 55467825
+},
+{
+  "_id": {
+    "$oid": "66dcd3da8f5484ef1b83a80f"
+  },
+  "username": "SteakLover88",
+  "password": "SteakLover88",
+  "displayName": "SteakLover88",
+  "image": "https://i.pravatar.cc/150?img=45",
+  "subscribers": 567825
+},
+{
+  "_id": {
+    "$oid": "66dcd44a8f5484ef1b83a810"
+  },
+  "username": "CuriousCook",
+  "password": "CuriousCook",
+  "displayName": "CuriousCook",
+  "image": "https://i.pravatar.cc/150?img=52",
+  "subscribers": 7267825
+},
+{
+  "_id": {
+    "$oid": "66dcd47e8f5484ef1b83a811"
+  },
+  "username": "BBQMaster",
+  "password": "BBQMaster",
+  "displayName": "BBQMaster",
+  "image": "https://i.pravatar.cc/150?img=55",
+  "subscribers": 5967825
+},
+{
+  "_id": {
+    "$oid": "66dcd4af8f5484ef1b83a812"
+  },
+  "username": "SeafoodSeeker",
+  "password": "SeafoodSeeker",
+  "displayName": "SeafoodSeeker",
+  "image": "https://i.pravatar.cc/150?img=70",
+  "subscribers": 7825
+}]

@@ -1,0 +1,24 @@
+{
+  "files": {
+    "main.css": "/static/css/main.af3c6203.css",
+    "main.js": "/static/js/main.a64556eb.js",
+    "static/js/453.554b773c.chunk.js": "/static/js/453.554b773c.chunk.js",
+    "static/media/bootstrap-icons.woff?": "/static/media/bootstrap-icons.39795c0b4513de014cf8.woff",
+    "static/media/bootstrap-icons.woff2?": "/static/media/bootstrap-icons.b7bcc075b395c14ce8c2.woff2",
+    "static/media/meatube_logo_with_text.png": "/static/media/meatube_logo_with_text.b4fee95c5f680784db96.png",
+    "static/media/chicken.svg": "/static/media/chicken.f4bd736924c015258f293152ef6cad8a.svg",
+    "static/media/pig.svg": "/static/media/pig.493169eb1b0d49c4a5d36b0b4b53bec5.svg",
+    "static/media/vegan.svg": "/static/media/vegan.3bc2c8cae548c2da0862bb86793bcdac.svg",
+    "static/media/cow.svg": "/static/media/cow.5b8106105488c8ba1feb463f80ba96c8.svg",
+    "static/media/fish.svg": "/static/media/fish.1406eaa02f05802bd66688342dda67dc.svg",
+    "static/media/sheep.svg": "/static/media/sheep.54aa96129ddaa36fc5fd2ff685586dc8.svg",
+    "index.html": "/index.html",
+    "main.af3c6203.css.map": "/static/css/main.af3c6203.css.map",
+    "main.a64556eb.js.map": "/static/js/main.a64556eb.js.map",
+    "453.554b773c.chunk.js.map": "/static/js/453.554b773c.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.af3c6203.css",
+    "static/js/main.a64556eb.js"
+  ]
+}
