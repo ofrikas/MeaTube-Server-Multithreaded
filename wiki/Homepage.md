@@ -5,5 +5,5 @@ MeaTube is a social media application inspired by platforms like YouTube. It pro
 
 ## Team
 - [Oran Zafrani](https://github.com/Oran-Zafrani)
-- [Ofri Kastenbaum](https://github.com/Oran-Zafrani)
+- [Ofri Kastenbaum](https://github.com/Ofrikas)
 - [Bar Shwarts](https://github.com/BarShwarts1)
