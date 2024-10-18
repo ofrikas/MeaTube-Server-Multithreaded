@@ -7,6 +7,8 @@ const Video = require("../models/video");
 
 // Define the videoController object
 const videoController = {};
+const cppClient = require('../../Cpp_Server/cppClient'); // Import the TCP client
+
 
 // Define the GET /api/videos/:id route handler
 videoController.getVideoById = (req, res) => {
@@ -20,6 +22,13 @@ videoController.getVideoById = (req, res) => {
                 // Return a 404 Not Found response
                 return res.status(404).json({ message: 'Video not found' });
             }
+
+            // Asynchronously notify the C++ server about the video view
+            cppClient.write(`User viewed video ${id}`, (err) => {
+                if (err) {
+                    console.error('Failed to notify C++ server:', err);
+                }
+            });
 
             const videoLikes = Like.findLikesByVideoId(id);
             const videoDislikes = Like.findDisLikesByVideoId(id);
