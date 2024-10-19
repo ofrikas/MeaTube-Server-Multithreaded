@@ -4,22 +4,35 @@
 #include <unistd.h> // For close
 #include <thread> // For std::thread
 
-void handle_client(int client_sock) { // Function to handle client communication
-    char buffer[4096]; // Buffer to store client messages
-    while (true) { // Keep handling client messages
-        int read_bytes = recv(client_sock, buffer, sizeof(buffer), 0); // Receive message from client
-        if (read_bytes == 0) { // Check if connection is closed by client
+
+void handle_client(int client_sock) {
+    char buffer[4096];
+    while (true) {
+        int read_bytes = recv(client_sock, buffer, sizeof(buffer), 0);
+        if (read_bytes == 0) {
             std::cout << "Connection closed" << std::endl;
-            break; // Exit loop if connection is closed
-        } else if (read_bytes < 0) { // Check for receive error
+            break;
+        } else if (read_bytes < 0) {
             perror("Error receiving data");
-            break; // Exit loop if error occurred
+            break;
         }
         buffer[read_bytes] = '\0'; // Null-terminate the received data
-        std::cout << "Received: " << buffer << std::endl; // Print received message
-        send(client_sock, buffer, read_bytes, 0); // Echo back the received message
+
+        // New: Parse and process the message
+        std::string message(buffer);
+        if (message.find("User") == 0 && message.find("viewed video") != std::string::npos) {
+            // This is a video view notification
+            std::cout << "Notification: " << message << std::endl;
+            // Here you can add more logic to handle the notification, e.g., update a database
+        } else {
+            // Handle other types of messages
+            std::cout << "Received: " << message << std::endl;
+        }
+
+        // Echo back the received message
+        send(client_sock, buffer, read_bytes, 0);
     }
-    close(client_sock); // Close client socket
+    close(client_sock);
 }
 
 int main() {

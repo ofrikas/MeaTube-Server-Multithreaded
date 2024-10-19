@@ -23,11 +23,11 @@ videoController.getVideoById = (req, res) => {
                 return res.status(404).json({ message: 'Video not found' });
             }
 
-            // Asynchronously notify the C++ server about the video view
-            cppClient.write(`User viewed video ${id}`, (err) => {
-                if (err) {
-                    console.error('Failed to notify C++ server:', err);
-                }
+            // Asynchronously notify the C++ server about the video view and the user viewing it
+            cppClient.write(`User ${req.userData.username} viewed video ${id}`, (err) => {
+            if (err) {
+                console.error('Failed to notify C++ server:', err);
+            }
             });
 
             const videoLikes = Like.findLikesByVideoId(id);
