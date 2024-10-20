@@ -56,12 +56,12 @@ void handle_client(int client_sock)
                 std::cout << std::endl;
             }
         }
-        else if (message.find("User") == 0 && message.find("getTop20") != std::string::npos)
+        else if (message.find("user") == 0 && message.find("getTop20") != std::string::npos)
         {
             // Extract username from the message
             std::istringstream iss(message);
-            std::string user, getTop20;
-            iss >> user >> user >> getTop20;
+            std::string temp, user, getTop20;
+            iss >> temp >> user >> getTop20;
 
             // Debug: Print extracted username
             std::cout << "Debug: Extracted username: " << user << std::endl;
