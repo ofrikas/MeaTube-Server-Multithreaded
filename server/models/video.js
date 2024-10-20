@@ -2,6 +2,7 @@ const { once } = require('events');
 const mongoose = require('mongoose');
 const Like = require('./likes');
 const Comment = require('./comments');
+const cppClient = require('../../Cpp_Server/cppClient'); // Import the TCP client
 
 const videoSchema = new mongoose.Schema({
     title: {
@@ -181,53 +182,74 @@ videoSchema.statics.updateVideoById = async function(videoId, updatedData, reqUs
 };
 
 
-videoSchema.statics.getTop20Videos = async function() {
+videoSchema.statics.getTop20Videos = async function(username) {
     try {
-        const username = req.userData ? req.userData.username : 'guest';
-        cppClient.write(`user ${username} getTop20`, (err) => {
-            if (err) {
-                console.error('Failed to notify C++ server:', err);
-            }
-        });
-        
-        cppClient.on('data', async (data) => {
-            try {
-                const vidsStringFromCpp = data.toString();
-                const vidIdsFromCPP = vidsStringFromCpp.split(" ");
-                
-                var vidsFromCPP = [];
-                vidIdsFromCPP.forEach(async element => {
-                    var video = await this.findById(element);
-                    vidsFromCPP.push(video);
-                });
+        // Create a Promise to handle the cppClient response
+        const cppResponsePromise = new Promise((resolve, reject) => {
+            cppClient.write(`user ${username} getTop20`, (err) => {
+                if (err) {
+                    console.error('Failed to notify C++ server:', err);
+                    reject(err);
+                }
+            });
 
+            cppClient.on('data', async (data) => {
+                console.log('Received data from C++ server:', data.toString()); // Debugging log
+                try {
+                    const vidsStringFromCpp = data.toString();
+                    if (vidsStringFromCpp === 'No recommendations') {
+                        resolve([]);
+                        return;
+                    }
+                    const vidIdsFromCPP = vidsStringFromCpp.split(" ");
+                    const vidsFromCPP = await Promise.all(vidIdsFromCPP.map(async (element) => {
+                        return await this.findById(element);
+                    }));
 
-                const videos = await this.find({});
-        
-                // Sort videos by views in descending order
-                videos.sort((a, b) => b.views - a.views);
-        
-                // Get the top 10 most viewed videos
-                const top10MostViewed = videos.slice(0, 10);
-        
-                // Get the remaining videos
-                const remainingVideos = videos.slice(10);
-        
-                // Shuffle the remaining videos to get 10 random videos
-                const shuffledRemaining = remainingVideos.sort(() => 0.5 - Math.random());
-                const top10Random = shuffledRemaining.slice(0, 10);
-        
-                // Combine the top 10 most viewed and top 10 random videos and shuffle them
-                const top20Videos = [...vidsFromCPP, ...top10MostViewed, ...top10Random];
-                top20Videos.slice(0, 20);
-                top20Videos.sort(() => 0.5 - Math.random());
-        
-                return top20Videos;
-            } catch (error) {
-                console.error('Error processing data from C++ server:', error);
-            }
+                    resolve(vidsFromCPP);
+                } catch (error) {
+                    console.error('Error processing data from C++ server:', error);
+                    reject(error);
+                }
+            });
+
+            cppClient.on('error', (err) => {
+                console.error('Error with C++ client:', err);
+                reject(err);
+            });
+
+            cppClient.on('close', () => {
+                console.log('Connection to C++ server closed');
+            });
         });
+
+        // Wait for the response from the C++ server
+        console.log('Waiting for response from C++ server...');
+        const vidsFromCPP = await cppResponsePromise;
+        console.log('Received vids from C++ server:', vidsFromCPP);
+
+        const videos = await this.find({});
+
+        // Sort videos by views in descending order
+        videos.sort((a, b) => b.views - a.views);
+
+        // Get the top 10 most viewed videos
+        const top10MostViewed = videos.slice(0, 10);
+
+        // Get the remaining videos
+        const remainingVideos = videos.slice(10);
+
+        // Shuffle the remaining videos to get 10 random videos
+        const shuffledRemaining = remainingVideos.sort(() => 0.5 - Math.random());
+        const top10Random = shuffledRemaining.slice(0, 10);
+
+        // Combine the top 10 most viewed and top 10 random videos and shuffle them
+        const top20Videos = [...vidsFromCPP, ...top10MostViewed, ...top10Random].slice(0, 20);
+        top20Videos.sort(() => 0.5 - Math.random());
+
+        return top20Videos;
     } catch (error) {
+        console.error('Error getting top 20 videos:', error);
         throw new Error('Error getting top 20 videos: ' + error.message);
     }
 }

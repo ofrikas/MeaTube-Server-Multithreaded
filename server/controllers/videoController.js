@@ -77,7 +77,8 @@ videoController.addVideo = async (req, res) => {
 // Controller function to get the top 20 videos in random order
 videoController.getTop20Videos = async (req, res) => {
     try {
-        const videos = await Video.getTop20Videos();
+        const username = req.userData ? req.userData.username : 'guest';
+        const videos = await Video.getTop20Videos(username);
         const videoPromises = videos.map(async video => {
             const userDetail = await User.findUserByUsername(video.username);
             video.channel = userDetail.displayName;
