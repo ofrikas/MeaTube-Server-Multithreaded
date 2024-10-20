@@ -24,10 +24,12 @@ videoController.getVideoById = (req, res) => {
             }
 
             // Asynchronously notify the C++ server about the video view and the user viewing it
-            cppClient.write(`User ${req.userData.username} viewed video ${id}`, (err) => {
-            if (err) {
-                console.error('Failed to notify C++ server:', err);
-            }
+            // Asynchronously notify the C++ server about the video view and the user viewing it
+            const username = req.userData ? req.userData.username : 'guest';
+            cppClient.write(`User ${username} viewed video ${id}`, (err) => {
+                if (err) {
+                    console.error('Failed to notify C++ server:', err);
+                }
             });
 
             const videoLikes = Like.findLikesByVideoId(id);
@@ -44,7 +46,7 @@ videoController.getVideoById = (req, res) => {
                     video._doc.comments = [...values[2]] || [];
                     video._doc.channel = values[3].displayName;
 
-                    if(req.userData) {
+                    if (req.userData) {
                         video._doc.userLiked = values[0].some(like => like.username === req.userData.username);
                         video._doc.userDisliked = values[1].some(dislike => dislike.username === req.userData.username);
                     }
@@ -65,10 +67,11 @@ videoController.addVideo = async (req, res) => {
     req.body.channel = req.userData.displayName;
     try {
         await Video.addVideo(req.body).then((newVideo) => {
-        res.status(201).json(newVideo)});
-      } catch (error) {
+            res.status(201).json(newVideo)
+        });
+    } catch (error) {
         res.status(400).json({ message: error.message });
-      }
+    }
 };
 
 // Controller function to get the top 20 videos in random order
@@ -105,11 +108,11 @@ videoController.getVideosByUsername = async (req, res) => {
     try {
         const userDetails = await User.findUserByUsername(req.params.username);
         const videos = await Video.getVideosByUsername(req.params.username).then((videos) => {
-        videos.forEach(video => {
-            video.channel = userDetails.displayName;
+            videos.forEach(video => {
+                video.channel = userDetails.displayName;
+            });
+            return videos;
         });
-        return videos;
-    });
         res.json(videos);
     } catch (error) {
         res.status(500).json({ message: 'Server error' });
@@ -117,9 +120,9 @@ videoController.getVideosByUsername = async (req, res) => {
 };
 // Define the DELETE /api/videos/:id route handler
 videoController.deleteVideoById = async (req, res) => {
-        try {    
+    try {
         // Extract the videoId from the URL parameters
-        const videoId = req.params.id; 
+        const videoId = req.params.id;
         const reqUsername = req.userData.username;
 
         // Call the static method to delete the video and associated comments

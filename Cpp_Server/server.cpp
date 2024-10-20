@@ -1,9 +1,14 @@
-#include <iostream> // For input and output
-#include <cstring> // For memset
-#include <arpa/inet.h> // For internet operations
-#include <unistd.h> // For close
-#include <thread> // For std::thread
+#include <iostream>
+#include <cstring>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <thread>
+#include <unordered_map>
+#include <set>
+#include <sstream>
 
+// Global map to store user video views
+std::unordered_map<std::string, std::set<std::string>> user_video_views;
 
 void handle_client(int client_sock) {
     char buffer[4096];
@@ -23,7 +28,24 @@ void handle_client(int client_sock) {
         if (message.find("User") == 0 && message.find("viewed video") != std::string::npos) {
             // This is a video view notification
             std::cout << "Notification: " << message << std::endl;
-            // Here you can add more logic to handle the notification, e.g., update a database
+
+            // Extract username and video ID from the message
+            std::istringstream iss(message);
+            std::string user, viewed, video, video_id;
+            iss >> user >> user >> viewed >> video >> video_id;
+
+            // Update the map with the new video view
+            user_video_views[user].insert(video_id);
+
+            // Print the current state of the map (for debugging)
+            std::cout << "Current user video views:" << std::endl;
+            for (const auto& pair : user_video_views) {
+                std::cout << "User: " << pair.first << " has viewed videos: ";
+                for (const auto& vid : pair.second) {
+                    std::cout << vid << " ";
+                }
+                std::cout << std::endl;
+            }
         } else {
             // Handle other types of messages
             std::cout << "Received: " << message << std::endl;
